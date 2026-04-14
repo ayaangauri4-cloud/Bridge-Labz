@@ -1,0 +1,27 @@
+
+Passport (Local + JWT)
+
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+
+passport.use('local', new LocalStrategy(async (username, password, done) => {
+  return done(null, { id: 1, username });
+}));
+
+passport.use('jwt', new JwtStrategy({
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: 'secret'
+}, (payload, done) => {
+  return done(null, payload);
+}));
+
+app.post('/auth/login', passport.authenticate('local'), (req, res) => {
+  res.json(req.user);
+});
+
+app.get('/api/profile',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => res.json(req.user)
+);
