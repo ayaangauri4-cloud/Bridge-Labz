@@ -1,0 +1,58 @@
+
+data 
+let authors = [
+  { id: 1, name: 'George Orwell' },
+  { id: 2, name: 'Harper Lee' }
+];
+let authorId = 3;
+
+
+create 
+app.post('/api/authors', (req, res) => {
+  const { name } = req.body;
+
+  const newAuthor = { id: authorId++, name };
+  authors.push(newAuthor);
+
+  res.status(201).json(newAuthor);
+});
+
+
+read all
+app.get('/api/authors', (req, res) => {
+  res.json(authors);
+});
+
+
+read one
+app.get('/api/authors/:id', (req, res) => {
+  const author = authors.find(a => a.id == req.params.id);
+
+  if (!author) return res.status(404).send('Not found');
+
+  res.json(author);
+});
+
+
+update 
+app.put('/api/authors/:id', (req, res) => {
+  const index = authors.findIndex(a => a.id == req.params.id);
+
+  if (index === -1) return res.status(404).send('Not found');
+
+  authors[index].name = req.body.name;
+
+  res.json(authors[index]);
+});
+
+
+delate 
+app.delete('/api/authors/:id', (req, res) => {
+  const index = authors.findIndex(a => a.id == req.params.id);
+
+  if (index === -1) return res.status(404).send('Not found');
+
+  const deleted = authors.splice(index, 1);
+
+  res.json(deleted);
+});

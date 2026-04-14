@@ -1,0 +1,19 @@
+
+app.get('/api/books', (req, res) => {
+  let { page = 1, limit = 2 } = req.query;
+
+  page = parseInt(page);
+  limit = parseInt(limit);
+
+  const start = (page - 1) * limit;
+  const end = start + limit;
+
+  const result = books.slice(start, end);
+
+  res.json({
+    page,
+    limit,
+    total: books.length,
+    data: result
+  });
+});
