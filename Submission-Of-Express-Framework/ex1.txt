@@ -1,0 +1,18 @@
+app.get('/users', (req, res) => {
+  const users = [
+    { id: 1, name: 'Alice' },
+    { id: 2, name: 'Bob' },
+    { id: 3, name: 'Charlie' }
+  ];
+
+  const name = req.query.name;
+
+  if (name) {
+    const result = users.filter(u =>
+      u.name.toLowerCase().includes(name.toLowerCase())
+    );
+    res.json(result);
+  } else {
+    res.json(users);
+  }
+});

@@ -1,0 +1,10 @@
+
+app.get('/gallery', (req, res) => {
+  const images = ['img1.jpg', 'img2.jpg'];
+  res.render('gallery', { images });
+});
+
+<h1>Gallery</h1>
+<% images.forEach(img => { %>
+  <img src="/images/<%= img %>" width="200">
+<% }) %>
