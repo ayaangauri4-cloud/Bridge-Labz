@@ -1,0 +1,28 @@
+
+Data Sanitization Middleware (Security)
+
+const xss = require('xss-clean');
+const mongoSanitize = require('express-mongo-sanitize');
+
+// Prevent XSS attacks
+app.use(xss());
+
+// Prevent MongoDB Injection
+app.use(mongoSanitize());
+
+// Custom sanitization
+const sanitizeInput = (req, res, next) => {
+  const sanitize = (obj) => {
+    for (let key in obj) {
+      if (typeof obj[key] === 'string') {
+        obj[key] = obj[key].replace(/<[^>]*>?/gm, "");
+      }
+    }
+  };
+
+  sanitize(req.body);
+  sanitize(req.query);
+  next();
+};
+
+app.use(sanitizeInput);

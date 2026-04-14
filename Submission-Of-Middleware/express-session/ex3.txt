@@ -1,0 +1,38 @@
+
+ Secure Admin Panel (Session + Role)
+
+ app.use(session({
+  secret: 'admin-secret',
+  resave: false,
+  saveUninitialized: false
+}));
+
+// Login
+app.post('/login', (req, res) => {
+  const { username, password } = req.body;
+
+  if (username === 'admin' && password === '123') {
+    req.session.user = { username, role: 'admin' };
+    return res.send('Login success');
+  }
+
+  res.status(401).send('Invalid');
+});
+
+// Auth middleware
+const isAuth = (req, res, next) => {
+  if (!req.session.user) return res.status(401).send('Login required');
+  next();
+};
+
+// Admin middleware
+const isAdmin = (req, res, next) => {
+  if (req.session.user.role !== 'admin')
+    return res.status(403).send('Admin only');
+  next();
+};
+
+// Admin panel
+app.get('/admin', isAuth, isAdmin, (req, res) => {
+  res.send('Welcome Admin Panel');
+});

@@ -1,0 +1,50 @@
+
+Anonymous vs Authenticated Cart
+
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+app.use(session({
+  secret: 'cart-secret',
+  resave: false,
+  saveUninitialized: true
+}));
+
+// Add to cart
+app.post('/cart/add', (req, res) => {
+  const item = req.body;
+
+  if (req.session.user) {
+    // Logged in → session cart
+    req.session.cart = req.session.cart || [];
+    req.session.cart.push(item);
+    return res.json({ cart: req.session.cart });
+  } else {
+    // Guest → cookie cart
+    let cart = req.cookies.cart ? JSON.parse(req.cookies.cart) : [];
+    cart.push(item);
+    res.cookie('cart', JSON.stringify(cart));
+    return res.json({ cart });
+  }
+});
+
+// Login & migrate cart
+app.post('/login', (req, res) => {
+  req.session.user = { name: "User" };
+
+  let cookieCart = req.cookies.cart ? JSON.parse(req.cookies.cart) : [];
+
+  req.session.cart = (req.session.cart || []).concat(cookieCart);
+
+  res.clearCookie('cart');
+
+  res.send('Logged in & cart merged');
+});
+
+// View cart
+app.get('/cart', (req, res) => {
+  if (req.session.user) {
+    res.json(req.session.cart || []);
+  } else {
+    res.json(req.cookies.cart ? JSON.parse(req.cookies.cart) : []);
+  }
+});

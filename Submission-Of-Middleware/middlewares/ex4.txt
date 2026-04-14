@@ -1,0 +1,33 @@
+
+Soft Delete System
+
+const itemSchema = new mongoose.Schema({
+  name: String,
+  deleted: {
+    type: Boolean,
+    default: false
+  }
+});
+
+// Override delete → soft delete
+itemSchema.pre('findOneAndDelete', async function (next) {
+  const doc = await this.model.findOne(this.getQuery());
+  if (doc) {
+    doc.deleted = true;
+    await doc.save();
+  }
+  next(new Error("Use soft delete instead"));
+});
+
+// Auto-filter deleted data
+itemSchema.pre(/^find/, function (next) {
+  this.where({ deleted: false });
+  next();
+});
+
+const Item = mongoose.model('Item', itemSchema);
+
+// Soft delete function
+const softDelete = async (id) => {
+  await Item.findByIdAndUpdate(id, { deleted: true });
+};

@@ -1,0 +1,37 @@
+
+Multi-Factor Authentication (JWT + OTP)
+
+const jwt = require('jsonwebtoken');
+const SECRET = "secret";
+
+// Demo OTP store
+const otpStore = new Map();
+
+// Middleware
+const verifyMFA = (req, res, next) => {
+  const token = req.headers.authorization?.split(" ")[1];
+  const otp = req.headers['x-otp'];
+
+  if (!token || !otp) {
+    return res.status(401).json({ error: "Token and OTP required" });
+  }
+
+  try {
+    const user = jwt.verify(token, SECRET);
+
+    const validOtp = otpStore.get(user.id);
+    if (validOtp != otp) {
+      return res.status(403).json({ error: "Invalid OTP" });
+    }
+
+    req.user = user;
+    next();
+  } catch {
+    res.status(403).json({ error: "Invalid Token" });
+  }
+};
+
+// Example route
+app.post('/secure-action', verifyMFA, (req, res) => {
+  res.send("MFA verified");
+});

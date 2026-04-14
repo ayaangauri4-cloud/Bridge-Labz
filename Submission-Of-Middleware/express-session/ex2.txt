@@ -1,0 +1,25 @@
+
+Language Preference System (Cookies)
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
+// Set language
+app.get('/set-language/:lang', (req, res) => {
+  res.cookie('lang', req.params.lang, {
+    maxAge: 30 * 24 * 60 * 60 * 1000
+  });
+  res.send('Language updated');
+});
+
+// Get language
+app.get('/home', (req, res) => {
+  const lang = req.cookies.lang || 'en';
+
+  const messages = {
+    en: "Hello",
+    hi: "नमस्ते",
+    fr: "Bonjour"
+  };
+
+  res.send(messages[lang]);
+});
