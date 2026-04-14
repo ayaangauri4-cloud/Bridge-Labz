@@ -1,0 +1,21 @@
+{
+  "name": "bridgelabz-node",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ayaangauri4-cloud/Bridge-Labz.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ayaangauri4-cloud/Bridge-Labz.git"
+  },
+  "homepage": "https://github.com/ayaangauri4-cloud/Bridge-Labz.git"
+}
